@@ -28,7 +28,7 @@ Domain Hierarchy:
 ## 2. Tech Stack
 * **Language:** Python 3.12+
 * **Framework:** Django 5+ / 6+ (Model-View-Template pattern)
-* **Database:** MySQL 8.0+ (Driver: `PyMySQL` pure Python)
+* **Database:** MySQL 8.4+ LTS (Driver: `PyMySQL` pure Python)
 * **Styling & UI:** Bootstrap 5.3, Bootstrap Icons, Google Fonts (Montserrat & Open Sans)
 * **Authentication:** Django Auth engine with customized registration and login forms
 
@@ -49,7 +49,7 @@ Domain Hierarchy:
 
 ### Prerequisites
 * Python 3.12 or higher installed.
-* MySQL Server (local, XAMPP, Laragon, or Docker) with a database named `vallenato_festival_db`.
+* Docker Desktop (recommended) or MySQL Server 8.4+ local with a database named `vallenato_festival_db`.
 
 ### Step 1: Clone Repository
 ```bash
@@ -57,7 +57,13 @@ git clone https://github.com/bryan-andina/festival-vallenato.git
 cd festival-vallenato
 ```
 
-### Step 2: Create & Activate Virtual Environment
+### Step 2: Start MySQL Database (Docker)
+```bash
+docker compose up -d
+```
+*(Spins up an isolated MySQL 8.4 LTS container on port 3306 with `vallenato_festival_db` ready).*
+
+### Step 3: Create & Activate Virtual Environment
 ```bash
 # Windows (PowerShell)
 python -m venv .venv
@@ -68,13 +74,13 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-### Step 3: Install Dependencies
+### Step 4: Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### Step 4: Environment Variables Setup
-Copy the example environment file and configure your MySQL credentials:
+### Step 5: Environment Variables Setup
+Copy the example environment file:
 ```bash
 # Windows
 copy .env.example .env
@@ -82,40 +88,26 @@ copy .env.example .env
 # Linux / macOS
 cp .env.example .env
 ```
-Edit `.env` with your MySQL details:
-```env
-DEBUG=True
-SECRET_KEY=your-custom-secure-key
-DB_NAME=vallenato_festival_db
-DB_USER=root
-DB_PASSWORD=your_password
-DB_HOST=127.0.0.1
-DB_PORT=3306
-USE_SQLITE=False
-```
-*(Note: If MySQL is temporarily offline during initial testing, set `USE_SQLITE=True` for seamless fallback).*
+Ensure your database credentials in `.env` match your environment.
 
-### Step 5: Execute Database Migrations
+### Step 6: Execute Database Migrations
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-### Step 6: Populate Initial Festival Data & Superuser
-Run the automated seed command to load the 60th Edition, categories, sample candidates, and users:
+### Step 7: Load Initial Festival Data & Create Admin
+Run the automated seed command to load the 60th Edition, categories, and contestants:
 ```bash
 python manage.py seed_festival_data
 ```
+To securely create your administrative credentials:
+```bash
+python manage.py createsuperuser
+```
+*(Note: Public voters can self-register directly through the web portal interface at `/accounts/register/`).*
 
-Default credentials generated:
-* **Administrator:**
-  * **User:** `admin`
-  * **Password:** `admin2027`
-* **Test Voter:**
-  * **User:** `voter_bryan`
-  * **Password:** `vallenato2027`
-
-### Step 7: Run Development Server
+### Step 8: Run Development Server
 ```bash
 python manage.py runserver
 ```
@@ -159,6 +151,7 @@ desarrollo-web/
 │   ├── settings.py         # Twelve-Factor configuration
 │   ├── urls.py             # Root URL dispatcher
 │   └── wsgi.py
+├── docker-compose.yml       # MySQL 8.4 container configuration
 ├── .env.example
 ├── .gitignore
 ├── manage.py
