@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ voting.title }} — Votación Festival Vallenato{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'voting:edition_list' %}" class="text-decoration-none">Ediciones</a></li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'voting:category_list' voting.category.edition.year %}" class="text-decoration-none">
+                    {{ voting.category.edition.name }}
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{{ voting.title }}</li>
+        </ol>
+    </nav>
+
+    <!-- Ballot Information Header -->
+    <div class="card card-custom p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+            <div>
+                <span class="badge bg-secondary mb-1">Categoría: {{ voting.category.name }}</span>
+                <h1 class="h3 fw-bold mb-1">{{ voting.title }}</h1>
+            </div>
+            <div>
+                {% if voting.status == 'OPEN' %}
+                    <span class="badge bg-success fs-6"><i class="bi bi-broadcast"></i> Votación Abierta</span>
+                {% elif voting.status == 'DRAFT' %}
+                    <span class="badge bg-secondary fs-6"><i class="bi bi-clock"></i> En Preparación</span>
+                {% else %}
+                    <span class="badge bg-danger fs-6"><i class="bi bi-lock-fill"></i> Votación Finalizada</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <p class="text-muted">{{ voting.description|default:"Selecciona a tu opción participante predilecta. Recuerda que para consolidar tu voto debes estar debidamente autenticado." }}</p>
+
+        <div class="d-flex flex-wrap gap-4 small text-muted border-top pt-3">
+            <div><i class="bi bi-calendar-check me-1"></i> Apertura: <strong>{{ voting.start_datetime|date:"d M Y, H:i" }}</strong></div>
+            <div><i class="bi bi-calendar-x me-1"></i> Cierre: <strong>{{ voting.end_datetime|date:"d M Y, H:i" }}</strong></div>
+            <div><i class="bi bi-person-check me-1"></i> Votos permitidos: <strong>{{ voting.max_votes_per_user }} por usuario</strong></div>
+        </div>
+    </div>
+
+    <!-- Contestants / Options Grid -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h4 mb-0">Opciones y Candidatos Participantes</h2>
+        <span class="badge bg-dark">{{ options.count }} opción(es) inscrita(s)</span>
+    </div>
+
+    {% if options %}
+        <div class="row g-4">
+            {% for option in options %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card card-custom h-100 d-flex flex-column">
+                        {% if option.photo_url %}
+                            <img src="{{ option.photo_url }}" class="card-img-top" alt="{{ option.candidate_name }}" style="height: 220px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-light text-center py-5 border-bottom">
+                                <i class="bi bi-person-circle display-3 text-secondary"></i>
+                            </div>
+                        {% endif %}
+
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-baseline mb-1">
+                                <span class="badge bg-warning text-dark fw-bold">Opción #{{ option.order_num|default:forloop.counter }}</span>
+                                {% if option.hometown %}
+                                    <small class="text-muted"><i class="bi bi-geo-alt"></i> {{ option.hometown }}</small>
+                                {% endif %}
+                            </div>
+
+                            <h3 class="h5 card-title fw-bold text-dark mt-2 mb-1">{{ option.candidate_name }}</h3>
+                            {% if option.stage_name %}
+                                <p class="text-success fw-semibold small mb-2">"{{ option.stage_name }}"</p>
+                            {% endif %}
+
+                            <p class="card-text text-muted small flex-grow-1">
+                                {{ option.biography|default:"Participante oficial del concurso folclórico del Festival Vallenato."|truncatewords:30 }}
+                            </p>
+
+                            <div class="mt-3 pt-3 border-top text-center">
+                                {% if user.is_authenticated %}
+                                    <button class="btn btn-success w-100 fw-bold" disabled title="Funcionalidad programada para la Entrega 3">
+                                        <i class="bi bi-check2-circle"></i> Votar por este candidato (Próxima Fase)
+                                    </button>
+                                {% else %}
+                                    <a href="{% url 'accounts:login' %}" class="btn btn-outline-success w-100 fw-bold">
+                                        <i class="bi bi-lock"></i> Inicia sesión para votar
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card card-custom p-5 text-center">
+            <i class="bi bi-people text-muted display-4 mb-3"></i>
+            <h4 class="h5">No hay opciones registradas</h4>
+            <p class="text-muted small">Esta votación aún no cuenta con participantes o candidatos asignados en el sistema.</p>
+            <div>
+                <a href="/admin/voting/option/add/" class="btn btn-sm btn-dark" target="_blank">
+                    <i class="bi bi-plus-circle me-1"></i> Registrar Opciones en Django Admin
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

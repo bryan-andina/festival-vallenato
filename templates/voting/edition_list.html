@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Ediciones del Festival — Festival Vallenato{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-banner mb-5 text-center">
+    <div class="container py-3">
+        <span class="badge bg-warning text-dark px-3 py-2 fw-bold text-uppercase mb-3">
+            <i class="bi bi-award-fill"></i> Patrimonio Cultural Inmaterial de la Humanidad
+        </span>
+        <h1 class="display-5 fw-extrabold mb-3">Festival de la Leyenda Vallenata</h1>
+        <p class="lead max-w-700 mx-auto text-white-50">
+            Bienvenido al portal oficial de votaciones ciudadanas. Explora las distintas ediciones del certamen,
+            conoce las categorías folclóricas en competencia y apoya a los juglares del vallenato tradicional.
+        </p>
+    </div>
+</section>
+
+<!-- Editions Catalog Section -->
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="h3 mb-0">Ediciones Registradas</h2>
+            <p class="text-muted small mb-0">Selecciona una edición anual para consultar sus categorías oficiales de concurso</p>
+        </div>
+        <span class="badge bg-secondary fs-6">{{ editions.count }} Edición(es) activa(s)</span>
+    </div>
+
+    {% if editions %}
+        <div class="row g-4">
+            {% for edition in editions %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card card-custom h-100 d-flex flex-column">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-success">Activa</span>
+                                <span class="badge bg-dark fs-6">{{ edition.year }}</span>
+                            </div>
+                            <h3 class="h5 card-title fw-bold text-dark mb-2">{{ edition.name }}</h3>
+                            {% if edition.slogan %}
+                                <p class="text-primary fw-semibold small mb-2">
+                                    <i class="bi bi-chat-quote-fill"></i> "{{ edition.slogan }}"
+                                </p>
+                            {% endif %}
+                            <p class="card-text text-muted small">
+                                {{ edition.description|default:"Edición oficial del Festival de la Leyenda Vallenata celebrada en Valledupar, Cesar."|truncatewords:25 }}
+                            </p>
+                            <hr class="text-muted">
+                            <ul class="list-unstyled small text-muted mb-0">
+                                <li><i class="bi bi-calendar-event me-2"></i>{{ edition.start_date|date:"d M Y" }} — {{ edition.end_date|date:"d M Y" }}</li>
+                                <li><i class="bi bi-tags me-2"></i><strong>{{ edition.categories.count }}</strong> categorías en competencia</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 pt-0 pb-3">
+                            <a href="{% url 'voting:category_list' edition.year %}" class="btn btn-outline-success w-100 fw-bold">
+                                <i class="bi bi-arrow-right-circle me-1"></i> Ver Categorías
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card card-custom p-5 text-center">
+            <i class="bi bi-inbox text-muted display-3 mb-3"></i>
+            <h4 class="h5">No se encontraron ediciones activas</h4>
+            <p class="text-muted small">Accede a Django Admin para registrar la edición 2027 del Festival Vallenato.</p>
+            <div>
+                <a href="/admin/" class="btn btn-sm btn-dark" target="_blank">
+                    <i class="bi bi-shield-lock me-1"></i> Abrir Django Admin
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
