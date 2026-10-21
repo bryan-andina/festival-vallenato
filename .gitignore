@@ -26,3 +26,8 @@ db.sqlite3-journal
 *.swo
 Thumbs.db
 .DS_Store
+
+# Academic reference & delivery documents
+*.pdf
+Entrega1_Sistema_Votaciones_Vallenato.md
+Entrega*.md
