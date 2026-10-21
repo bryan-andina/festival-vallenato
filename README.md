@@ -53,8 +53,8 @@ Domain Hierarchy:
 
 ### Step 1: Clone Repository
 ```bash
-git clone https://github.com/<your-username>/festival-vallenato-2027.git
-cd festival-vallenato-2027
+git clone https://github.com/bryan-andina/festival-vallenato.git
+cd festival-vallenato
 ```
 
 ### Step 2: Create & Activate Virtual Environment
