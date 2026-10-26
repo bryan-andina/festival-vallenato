@@ -1,17 +1,3 @@
-"""
-Personalización del Django Admin para el dominio de votaciones del
-Festival de la Leyenda Vallenata.
-
-Incluye:
-  * Inlines: Categorías dentro de Edición, Votaciones dentro de Categoría y
-    Opciones dentro de Votación.
-  * list_display, list_filter, search_fields y contadores (opciones, votos).
-  * Acciones para abrir, suspender y cerrar votaciones (RF-06) que aplican
-    las reglas de negocio RN-04 y RN-05.
-  * Resultados parciales visibles solo para el administrador (CU-06).
-  * Votos en modo solo lectura: el administrador no puede crear, editar ni
-    borrar sufragios (RN-02 y restricciones del actor Administrador).
-"""
 from django.contrib import admin, messages
 from django.db.models import Count, Q
 from django.utils.html import format_html, format_html_join
@@ -22,7 +8,7 @@ admin.site.site_header = "Festival de la Leyenda Vallenata · Administración"
 admin.site.site_title = "Votaciones Vallenato"
 admin.site.index_title = "Panel de administración de votaciones"
 
-# RN-05: una votación necesita al menos dos opciones activas para abrirse.
+
 MIN_ACTIVE_OPTIONS = 2
 
 AUDIT_FIELDSET = (
@@ -31,11 +17,7 @@ AUDIT_FIELDSET = (
 )
 
 
-# ---------------------------------------------------------------------------
-# Inlines
-# ---------------------------------------------------------------------------
 class CategoryInline(admin.TabularInline):
-    """Edita las categorías directamente dentro de la Edición."""
     model = Category
     extra = 1
     fields = ("name", "code", "is_active")
@@ -44,9 +26,6 @@ class CategoryInline(admin.TabularInline):
 
 
 class VotingInline(admin.TabularInline):
-    """Muestra las votaciones de una Categoría. El estado es de solo lectura:
-    abrir/cerrar se hace desde la lista de Votaciones, donde se validan las
-    reglas RN-04 y RN-05."""
     model = Voting
     extra = 0
     fields = ("title", "status", "start_datetime", "end_datetime", "max_votes_per_user")
@@ -55,16 +34,12 @@ class VotingInline(admin.TabularInline):
 
 
 class OptionInline(admin.TabularInline):
-    """Edita las opciones (concursantes) directamente dentro de la Votación."""
     model = Option
     extra = 2
     fields = ("candidate_name", "stage_name", "hometown", "photo_url", "order_num", "is_active")
     ordering = ("order_num", "candidate_name")
 
 
-# ---------------------------------------------------------------------------
-# Edición
-# ---------------------------------------------------------------------------
 @admin.register(Edition)
 class EditionAdmin(admin.ModelAdmin):
     list_display = ("name", "year", "start_date", "end_date", "is_active", "categories_total", "created_at")
@@ -92,9 +67,6 @@ class EditionAdmin(admin.ModelAdmin):
         return obj._categories
 
 
-# ---------------------------------------------------------------------------
-# Categoría
-# ---------------------------------------------------------------------------
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("name", "edition", "code", "is_active", "votings_total", "created_at")
@@ -122,9 +94,6 @@ class CategoryAdmin(admin.ModelAdmin):
         return obj._votings
 
 
-# ---------------------------------------------------------------------------
-# Votación
-# ---------------------------------------------------------------------------
 @admin.register(Voting)
 class VotingAdmin(admin.ModelAdmin):
     list_display = (
@@ -155,7 +124,7 @@ class VotingAdmin(admin.ModelAdmin):
         AUDIT_FIELDSET,
     )
 
-    # -- consultas y columnas calculadas -----------------------------------
+
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(
             _active_options=Count("options", filter=Q(options__is_active=True), distinct=True),
@@ -203,11 +172,9 @@ class VotingAdmin(admin.ModelAdmin):
             grand_total,
         )
 
-    # -- reglas de negocio ---------------------------------------------------
+
     @staticmethod
     def _activation_problem(voting):
-        """Devuelve el motivo por el cual la votación no puede estar abierta,
-        o None si cumple RN-04 y RN-05."""
         if not voting.category.edition.is_active:
             return "la edición del festival no está activa (RN-04)."
         active = voting.options.filter(is_active=True).count()
@@ -219,8 +186,6 @@ class VotingAdmin(admin.ModelAdmin):
         return None
 
     def save_related(self, request, form, formsets, change):
-        """Después de guardar las opciones, si la votación quedó OPEN sin
-        cumplir las reglas, vuelve a Borrador y avisa al administrador."""
         super().save_related(request, form, formsets, change)
         voting = form.instance
         if voting.status == Voting.Status.OPEN:
@@ -234,7 +199,7 @@ class VotingAdmin(admin.ModelAdmin):
                     messages.WARNING,
                 )
 
-    # -- acciones (RF-06) ------------------------------------------------------
+
     @admin.action(description="Abrir votaciones seleccionadas")
     def open_votings(self, request, queryset):
         opened = 0
@@ -294,9 +259,6 @@ class VotingAdmin(admin.ModelAdmin):
             self.message_user(request, f"{closed} votación(es) cerrada(s).", messages.SUCCESS)
 
 
-# ---------------------------------------------------------------------------
-# Opción / Candidato
-# ---------------------------------------------------------------------------
 @admin.register(Option)
 class OptionAdmin(admin.ModelAdmin):
     list_display = (
@@ -329,9 +291,6 @@ class OptionAdmin(admin.ModelAdmin):
         return obj._votes
 
 
-# ---------------------------------------------------------------------------
-# Voto (inmutable)
-# ---------------------------------------------------------------------------
 @admin.register(Vote)
 class VoteAdmin(admin.ModelAdmin):
     list_display = ("user", "voting", "selected_option", "ip_address", "created_at")
@@ -346,7 +305,7 @@ class VoteAdmin(admin.ModelAdmin):
     date_hierarchy = "created_at"
     readonly_fields = ("user", "voting", "selected_option", "ip_address", "created_at", "updated_at")
 
-    # RN-02: un voto emitido no se crea, modifica ni elimina desde el admin.
+
     def has_add_permission(self, request):
         return False
 

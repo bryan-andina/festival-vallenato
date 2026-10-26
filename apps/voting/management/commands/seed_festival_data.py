@@ -1,29 +1,3 @@
-"""
-Comando para cargar datos de prueba (seed) del Festival de la Leyenda Vallenata.
-
-Uso:
-    python manage.py seed_festival_data
-    python manage.py seed_festival_data --with-sample-votes
-    python manage.py seed_festival_data --refresh-windows
-    python manage.py seed_festival_data --admin-password "..." --voter-password "..."
-
-Es idempotente: se puede ejecutar varias veces sin duplicar registros.
-
-Contraseñas: se toman de --admin-password / --voter-password, o de las variables
-de entorno SEED_ADMIN_PASSWORD / SEED_VOTER_PASSWORD. Si no existen, se genera
-una aleatoria y se muestra UNA sola vez en consola al crear el usuario.
-
-Los concursantes y sus biografías son FICTICIOS: sirven para probar el sistema
-mientras la FFLV no entregue el listado oficial de inscritos (ver pregunta 6
-y la pendiente "Sincronización con base de datos de inscritos" de la Entrega 1).
-
-Estados de prueba incluidos (RF-02):
-    - Votaciones ABIERTAS    -> Profesional, Canción Inédita, Piqueria, Femenino
-    - Votación PRÓXIMA       -> Acordeón Juvenil (borrador con fecha futura)
-    - Votación CERRADA       -> Danza de Piloneras 2027 y Rey Profesional 2026
-    - Borrador con 1 opción  -> Acordeón Infantil (para probar la regla RN-05)
-    - Categorías sin votación-> Aficionado y Piqueria Infantil (estado vacío)
-"""
 import os
 from datetime import date, datetime, timedelta
 
@@ -38,9 +12,7 @@ from apps.voting.models import Category, Edition, Option, Vote, Voting
 User = get_user_model()
 Status = Voting.Status
 
-# ---------------------------------------------------------------------------
-# Datos
-# ---------------------------------------------------------------------------
+
 EDITIONS = [
     {
         "year": 2027,
@@ -65,7 +37,7 @@ EDITIONS = [
         ),
         "start_date": date(2026, 4, 27),
         "end_date": date(2026, 5, 1),
-        # Edición pasada: inactiva, para probar el filtro de ediciones activas.
+
         "is_active": False,
     },
 ]
@@ -92,7 +64,7 @@ CATEGORIES_2027 = [
      "Calificación coreográfica y de vestuario de las agrupaciones de baile tradicional."),
 ]
 
-# Cada opción: (candidate_name, stage_name, hometown, biography). order_num = posición + 1.
+
 VOTINGS_2027 = [
     {
         "category": "acordeon-profesional",
@@ -167,7 +139,6 @@ VOTINGS_2027 = [
         ],
     },
     {
-        # PRÓXIMA: borrador con fecha de inicio futura.
         "category": "acordeon-juvenil",
         "title": "Favorito del Público: Acordeón Juvenil 2027",
         "description": "Próximamente: elige a la nueva promesa del acordeón vallenato.",
@@ -180,7 +151,6 @@ VOTINGS_2027 = [
         ],
     },
     {
-        # Borrador con UNA sola opción: al intentar abrirla el admin debe rechazarla (RN-05).
         "category": "acordeon-infantil",
         "title": "Favorito del Público: Acordeón Infantil 2027",
         "description": "Próximamente: apoya al pequeño juglar de tu preferencia.",
@@ -192,7 +162,6 @@ VOTINGS_2027 = [
         ],
     },
     {
-        # CERRADA.
         "category": "danza-piloneras",
         "title": "Favorita del Público: Danza de Piloneras 2027",
         "description": "Votación finalizada: comparsa favorita del público en el desfile de piloneras.",
@@ -258,7 +227,7 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS(">>> Carga finalizada correctamente."))
 
-    # -- usuarios ---------------------------------------------------------------
+
     def _password(self, cli_value, env_name):
         value = cli_value or os.environ.get(env_name)
         if value:
@@ -305,7 +274,7 @@ class Command(BaseCommand):
             self._password(options["voter_password"], "SEED_VOTER_PASSWORD"),
         )
 
-    # -- ediciones y categorías ---------------------------------------------------
+
     def _seed_editions(self):
         editions = {}
         for data in EDITIONS:
@@ -328,7 +297,7 @@ class Command(BaseCommand):
         )
         return category
 
-    # -- votaciones --------------------------------------------------------------
+
     def _ensure_options(self, voting, options):
         for position, (candidate, stage, hometown, biography) in enumerate(options, start=1):
             Option.objects.get_or_create(
@@ -381,7 +350,7 @@ class Command(BaseCommand):
     def _seed_voting_2026(self, edition):
         name, code, description = CATEGORY_2026
         category = self._ensure_category(edition, name, code, description)
-        aware = lambda parts: timezone.make_aware(datetime(*parts))  # noqa: E731
+        aware = lambda parts: timezone.make_aware(datetime(*parts))
         voting, created = Voting.objects.get_or_create(
             category=category,
             title=VOTING_2026["title"],
@@ -401,7 +370,7 @@ class Command(BaseCommand):
         )
         return voting
 
-    # -- votos de ejemplo (opcional) -----------------------------------------------
+
     def _seed_votes(self, votings):
         voters = []
         for i in range(1, 6):
@@ -414,7 +383,7 @@ class Command(BaseCommand):
                 },
             )
             if created:
-                user.set_unusable_password()  # solo sirven como datos; no inician sesión
+                user.set_unusable_password()
                 user.save()
             voters.append(user)
 
@@ -431,7 +400,7 @@ class Command(BaseCommand):
                     voting=voting,
                     defaults={
                         "selected_option": options[(i + j) % len(options)],
-                        "ip_address": f"203.0.113.{10 + i}",  # rango reservado para documentación
+                        "ip_address": f"203.0.113.{10 + i}",
                     },
                 )
                 created_total += int(created)
