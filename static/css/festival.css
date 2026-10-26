@@ -1,0 +1,111 @@
+
+:root {
+    --primary-vallenato: #1B4D3E;
+    --secondary-vallenato: #D4AF37;
+    --accent-vallenato: #E63946;
+    --dark-vallenato: #132A13;
+    --light-bg: #F8F9FA;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: var(--light-bg);
+    color: #2D3748;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+h1, h2, h3, h4, h5, .navbar-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+}
+
+    .navbar-custom {
+    background-color: var(--dark-vallenato);
+    border-bottom: 3px solid var(--secondary-vallenato);
+}
+
+.hero-banner {
+    background: linear-gradient(135deg,
+        var(--dark-vallenato) 0%,
+        var(--primary-vallenato) 100%);
+    color: white;
+    padding: 3.5rem 1rem;
+    position: relative;
+}
+
+.badge-status-open {
+    background-color: #28a745;
+}
+
+.badge-status-draft {
+    background-color: #6c757d;
+}
+
+.badge-status-closed {
+    background-color: #dc3545;
+
+}
+
+.card-custom:hover {
+    transform: translateY(-6px);
+    transition: all 0.3s ease;
+}
+
+.card-custom {
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .hero-banner {
+        padding: 2rem 1rem;
+    }
+
+    .card-custom {
+        margin-bottom: 1rem;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+}
+
+.hero-banner {
+    background-image:
+        linear-gradient(
+            rgba(0, 0, 0, 0.55),
+            rgba(0, 0, 0, 0.55)
+        ),
+        url('/static/img/banner.jpg');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    min-height: 400px;
+    color: white;
+    padding: 4rem 1rem;
+}
+
+.login-page {
+    min-height: calc(100vh - 120px);
+
+    background-image:
+        linear-gradient(
+            rgba(0, 0, 0, 0.45),
+            rgba(0, 0, 0, 0.45)
+        ),
+        url('/static/img/login-bg.png');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    padding: 50px 0;
+}
+
+.login-page .card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+}

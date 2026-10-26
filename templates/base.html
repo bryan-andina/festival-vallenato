@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,63 +13,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-vallenato: #1B4D3E;
-            --secondary-vallenato: #D4AF37;
-            --accent-vallenato: #E63946;
-            --dark-vallenato: #132A13;
-            --light-bg: #F8F9FA;
-        }
-        body {
-            font-family: 'Open Sans', sans-serif;
-            background-color: var(--light-bg);
-            color: #2D3748;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        h1, h2, h3, h4, h5, .navbar-brand {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-        }
-        .navbar-custom {
-            background-color: var(--dark-vallenato);
-            border-bottom: 3px solid var(--secondary-vallenato);
-        }
-        .hero-banner {
-            background: linear-gradient(135deg, var(--dark-vallenato) 0%, var(--primary-vallenato) 100%);
-            color: white;
-            padding: 3.5rem 1rem;
-            position: relative;
-        }
-        .badge-status-open {
-            background-color: #28a745;
-        }
-        .badge-status-draft {
-            background-color: #6c757d;
-        }
-        .badge-status-closed {
-            background-color: #dc3545;
-        }
-        .card-custom {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .card-custom:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-        }
-        .footer-custom {
-            background-color: var(--dark-vallenato);
-            color: #E2E8F0;
-            margin-top: auto;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-    </style>
-    {% block extra_head %}{% endblock %}
+
+    <link rel="stylesheet" href="{% static 'css/festival.css' %}">
+    
 </head>
 <body>
 
@@ -76,7 +23,11 @@
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'voting:edition_list' %}">
-                <i class="bi bi-music-note-beamed text-warning fs-3"></i>
+                <img src="{% static 'img/logo.png' %}"
+                  alt="Logo Festival"
+                  width="45"
+                  height="45"
+                 class="rounded">
                 <div>
                     <span class="d-block lh-1 text-white">Festival Vallenato</span>
                     <small class="text-warning" style="font-size: 0.72rem; letter-spacing: 1px;">SISTEMA DE VOTACIONES 2027</small>
