@@ -1,8 +1,11 @@
 from datetime import date, timedelta
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
-from apps.voting.models import Edition, Category, Voting, Option
+from apps.voting.models import Edition, Category, Voting, Option, Vote
+
+User = get_user_model()
 
 
 class VotingDomainModelTests(TestCase):
@@ -76,6 +79,16 @@ class VotingPublicViewsTests(TestCase):
             end_datetime=now + timedelta(days=5),
             max_votes_per_user=1
         )
+        self.option = Option.objects.create(
+            voting=self.voting,
+            candidate_name="Javier Matta Correa",
+            stage_name="El Pollo de Santa Marta",
+            order_num=1
+        )
+        self.user = User.objects.create_user(
+            username="voter_test",
+            password="testpassword123"
+        )
 
     def test_edition_list_view_status_code(self):
         response = self.client.get(reverse("voting:edition_list"))
@@ -91,3 +104,18 @@ class VotingPublicViewsTests(TestCase):
         response = self.client.get(reverse("voting:voting_detail", kwargs={"voting_id": self.voting.id}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Elección Popular Rey Vallenato")
+
+    def test_cast_vote_successful(self):
+        self.client.login(username="voter_test", password="testpassword123")
+        url = reverse("voting:cast_vote", kwargs={"voting_id": self.voting.id, "option_id": self.option.id})
+        response = self.client.post(url)
+        self.assertRedirects(response, reverse("voting:voting_detail", kwargs={"voting_id": self.voting.id}))
+        self.assertEqual(Vote.objects.filter(user=self.user, voting=self.voting).count(), 1)
+
+    def test_cast_vote_duplicate_prevented(self):
+        self.client.login(username="voter_test", password="testpassword123")
+        url = reverse("voting:cast_vote", kwargs={"voting_id": self.voting.id, "option_id": self.option.id})
+        self.client.post(url)
+        response = self.client.post(url)
+        self.assertRedirects(response, reverse("voting:voting_detail", kwargs={"voting_id": self.voting.id}))
+        self.assertEqual(Vote.objects.filter(user=self.user, voting=self.voting).count(), 1)
