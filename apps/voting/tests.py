@@ -1,6 +1,3 @@
-"""
-Unit and integration tests for the Festival Vallenato voting domain models and views.
-"""
 from datetime import date, timedelta
 from django.test import TestCase
 from django.urls import reverse

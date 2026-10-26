@@ -1,19 +1,11 @@
-"""
-Django settings for the Vallenato Legend Festival Voting System.
-Configured following SOLID principles, Twelve-Factor App methodology,
-and Clean Architecture standards.
-"""
 import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Build paths inside the project: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load environment variables from .env file
 load_dotenv(BASE_DIR / ".env")
 
-# Security Settings
 SECRET_KEY = os.getenv(
     "SECRET_KEY",
     "django-insecure-0tb3u#9g9g=d4^f7fu-w5h8qjp8%%#vc#fichlpj63g^0t72gz"
@@ -23,18 +15,13 @@ DEBUG = os.getenv("DEBUG", "True").lower() in ("true", "1", "yes")
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
-
-# Application definition
 INSTALLED_APPS = [
-    # Django core apps
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
-    # Local domain apps (Clean Architecture modular breakdown)
     "apps.common",
     "apps.accounts",
     "apps.voting",
@@ -70,10 +57,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "vallenato_project.wsgi.application"
 
-
-# Database Configuration
-# Primary: MySQL (Academic & Production requirement)
-# Driver: PyMySQL (pure Python, cross-platform)
 USE_SQLITE = os.getenv("USE_SQLITE", "False").lower() in ("true", "1", "yes")
 
 if USE_SQLITE:
@@ -99,8 +82,6 @@ else:
         }
     }
 
-
-# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -117,8 +98,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization & Regionalization (Colombia)
 LANGUAGE_CODE = "es-co"
 
 TIME_ZONE = "America/Bogota"
@@ -127,8 +106,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# Static and Media Files
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -136,11 +113,8 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-
-# Authentication Redirects
 LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "voting:edition_list"
 LOGOUT_REDIRECT_URL = "voting:edition_list"
 
-# Default Primary Key Field Type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

@@ -1,6 +1,3 @@
-"""
-Authentication and registration forms adhering to Single Responsibility Principle.
-"""
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -9,10 +6,6 @@ User = get_user_model()
 
 
 class UserRegistrationForm(UserCreationForm):
-    """
-    Form for registering new public voters in the Vallenato Festival platform.
-    Requires first name, last name, email and secure password.
-    """
     first_name = forms.CharField(
         max_length=50,
         required=True,
@@ -62,9 +55,6 @@ class UserRegistrationForm(UserCreationForm):
 
 
 class UserLoginForm(AuthenticationForm):
-    """
-    Styled login form for voter authentication.
-    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["username"].widget.attrs.update({

@@ -1,7 +1,3 @@
-"""
-Domain models for the Vallenato Legend Festival voting system.
-Adheres to Clean Architecture, SOLID principles, and Django best practices.
-"""
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
@@ -12,9 +8,6 @@ User = get_user_model()
 
 
 class Edition(TimeStampedModel):
-    """
-    Represents an annual edition of the Vallenato Legend Festival.
-    """
     name = models.CharField(
         max_length=150,
         unique=True,
@@ -69,10 +62,6 @@ class Edition(TimeStampedModel):
 
 
 class Category(TimeStampedModel):
-    """
-    Represents an official musical or cultural contest category within a festival edition.
-    Examples: Acordeón Profesional, Canción Vallenata Inédita, Piqueria Mayor, etc.
-    """
     edition = models.ForeignKey(
         Edition,
         on_delete=models.CASCADE,
@@ -113,9 +102,6 @@ class Category(TimeStampedModel):
 
 
 class Voting(TimeStampedModel):
-    """
-    Represents an active or scheduled voting process belonging to a specific category.
-    """
     class Status(models.TextChoices):
         DRAFT = "DRAFT", "Draft / Scheduled"
         OPEN = "OPEN", "Open for Voting"
@@ -174,7 +160,6 @@ class Voting(TimeStampedModel):
 
     @property
     def is_currently_open(self) -> bool:
-        """Determines if the voting is temporally and status-wise available."""
         now = timezone.now()
         return (
             self.status == self.Status.OPEN and
@@ -183,9 +168,6 @@ class Voting(TimeStampedModel):
 
 
 class Option(TimeStampedModel):
-    """
-    Represents a ballot option / contestant participating in a specific voting process.
-    """
     voting = models.ForeignKey(
         Voting,
         on_delete=models.CASCADE,
@@ -245,10 +227,6 @@ class Option(TimeStampedModel):
 
 
 class Vote(TimeStampedModel):
-    """
-    Persists an immutable cast ballot by an authenticated voter.
-    Prepares the schema for the upcoming phase (Entrega 3) following OCP.
-    """
     user = models.ForeignKey(
         User,
         on_delete=models.PROTECT,

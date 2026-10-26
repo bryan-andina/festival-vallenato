@@ -1,6 +1,3 @@
-"""
-URL routing for authentication and voter account operations.
-"""
 from django.urls import path
 from apps.accounts.views import UserRegistrationView, UserLoginView, UserLogoutView
 

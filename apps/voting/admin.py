@@ -1,13 +1,8 @@
-"""
-Django Admin customization for the Vallenato Legend Festival voting domain.
-Implements inlines, filters, and structured fields for intuitive administration.
-"""
 from django.contrib import admin
 from apps.voting.models import Edition, Category, Voting, Option, Vote
 
 
 class CategoryInline(admin.TabularInline):
-    """Allows managing categories directly within the Edition admin interface."""
     model = Category
     extra = 1
     fields = ("name", "code", "is_active")
@@ -15,7 +10,6 @@ class CategoryInline(admin.TabularInline):
 
 
 class OptionInline(admin.TabularInline):
-    """Allows managing ballot candidate options directly within the Voting interface."""
     model = Option
     extra = 2
     fields = ("candidate_name", "stage_name", "hometown", "order_num", "is_active")
@@ -78,5 +72,5 @@ class VoteAdmin(admin.ModelAdmin):
     readonly_fields = ("user", "voting", "selected_option", "ip_address", "created_at", "updated_at")
 
     def has_add_permission(self, request):
-        # Ballots should only be created via voter interface, not manually added
+
         return False

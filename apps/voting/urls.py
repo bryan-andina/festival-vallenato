@@ -1,6 +1,3 @@
-"""
-URL routing configuration for festival browsing and public voting views.
-"""
 from django.urls import path
 from apps.voting.views import EditionListView, CategoryListView, VotingDetailView
 

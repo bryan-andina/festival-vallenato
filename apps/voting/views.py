@@ -1,16 +1,9 @@
-"""
-Public MVT Views for browsing festival editions, contest categories, and voting ballots.
-Adheres to Clean Architecture and SOLID principles.
-"""
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, DetailView
 from apps.voting.models import Edition, Category, Voting
 
 
 class EditionListView(ListView):
-    """
-    Renders the public catalog of Vallenato Legend Festival editions.
-    """
     model = Edition
     template_name = "voting/edition_list.html"
     context_object_name = "editions"
@@ -20,9 +13,6 @@ class EditionListView(ListView):
 
 
 class CategoryListView(ListView):
-    """
-    Renders all official contest categories for a specific festival edition.
-    """
     model = Category
     template_name = "voting/category_list.html"
     context_object_name = "categories"
@@ -45,9 +35,6 @@ class CategoryListView(ListView):
 
 
 class VotingDetailView(DetailView):
-    """
-    Renders the voting ballot, displaying all registered options and contestants.
-    """
     model = Voting
     template_name = "voting/voting_detail.html"
     context_object_name = "voting"

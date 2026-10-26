@@ -1,7 +1,3 @@
-"""
-Management command to seed initial domain data for the Festival Vallenato 2027.
-Adheres to Single Responsibility Principle and idempotent design.
-"""
 from datetime import date, timedelta
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
@@ -17,7 +13,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write(self.style.NOTICE(">>> Starting Festival Vallenato 2027 Seed Process..."))
 
-        # 1. Superuser Creation
+
         admin_user, created = User.objects.get_or_create(
             username="admin",
             defaults={
@@ -35,7 +31,7 @@ class Command(BaseCommand):
         else:
             self.stdout.write(self.style.WARNING("[!] Superuser 'admin' already exists."))
 
-        # 2. Sample Public Voter
+
         voter, created = User.objects.get_or_create(
             username="voter_bryan",
             defaults={
@@ -49,7 +45,7 @@ class Command(BaseCommand):
             voter.save()
             self.stdout.write(self.style.SUCCESS("[+] Test voter user created: voter_bryan / vallenato2027"))
 
-        # 3. Festival Editions
+
         edition_2027, _ = Edition.objects.get_or_create(
             year=2027,
             defaults={
@@ -75,7 +71,7 @@ class Command(BaseCommand):
             }
         )
 
-        # 4. Categories for 2027
+
         categories_data = [
             {
                 "name": "Acordeón Profesional",
@@ -113,7 +109,7 @@ class Command(BaseCommand):
             created_categories[cat_info["code"]] = cat_obj
             self.stdout.write(self.style.SUCCESS(f"  [+] Category: {cat_obj.name}"))
 
-        # 5. Votings
+
         now = timezone.now()
         voting_profesional, _ = Voting.objects.get_or_create(
             category=created_categories["acordeon-profesional"],
@@ -139,7 +135,7 @@ class Command(BaseCommand):
             }
         )
 
-        # 6. Options / Candidates for Acordeón Profesional
+
         options_profesional = [
             {
                 "candidate_name": "Javier Matta Correa",
@@ -178,7 +174,7 @@ class Command(BaseCommand):
             )
             self.stdout.write(self.style.SUCCESS(f"    [+] Candidate: {opt_obj.candidate_name}"))
 
-        # Options for Canción Inédita
+
         options_inedita = [
             {
                 "candidate_name": "La Nostalgia del Juglar (Paseo)",

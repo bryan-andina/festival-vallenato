@@ -1,6 +1,3 @@
-"""
-Authentication views for user registration, login, and session termination.
-"""
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
@@ -11,10 +8,6 @@ from apps.accounts.forms import UserRegistrationForm, UserLoginForm
 
 
 class UserRegistrationView(CreateView):
-    """
-    Handles self-registration of voters.
-    Logs the user in automatically upon successful registration.
-    """
     form_class = UserRegistrationForm
     template_name = "accounts/register.html"
     success_url = reverse_lazy("voting:edition_list")
@@ -35,9 +28,6 @@ class UserRegistrationView(CreateView):
 
 
 class UserLoginView(LoginView):
-    """
-    Handles user login using the custom styled authentication form.
-    """
     form_class = UserLoginForm
     template_name = "accounts/login.html"
     redirect_authenticated_user = True
@@ -51,9 +41,6 @@ class UserLoginView(LoginView):
 
 
 class UserLogoutView(LogoutView):
-    """
-    Handles session termination and redirects to the home page with a confirmation message.
-    """
     next_page = reverse_lazy("voting:edition_list")
 
     def dispatch(self, request, *args, **kwargs):

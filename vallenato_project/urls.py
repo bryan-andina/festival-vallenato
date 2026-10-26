@@ -1,6 +1,3 @@
-"""
-Main URL Configuration for the Vallenato Legend Festival Project.
-"""
 from django.contrib import admin
 from django.urls import path, include
 
