@@ -11,7 +11,7 @@ class UserRegistrationForm(UserCreationForm):
         required=True,
         widget=forms.TextInput(attrs={
             "class": "form-control",
-            "placeholder": "Enter your first name"
+            "placeholder": "Ingresa tu nombre"
         })
     )
     last_name = forms.CharField(
@@ -19,14 +19,14 @@ class UserRegistrationForm(UserCreationForm):
         required=True,
         widget=forms.TextInput(attrs={
             "class": "form-control",
-            "placeholder": "Enter your last name"
+            "placeholder": "Ingresa tu apellido"
         })
     )
     email = forms.EmailField(
         required=True,
         widget=forms.EmailInput(attrs={
             "class": "form-control",
-            "placeholder": "name@example.com"
+            "placeholder": "nombre@ejemplo.com"
         })
     )
 
@@ -38,19 +38,19 @@ class UserRegistrationForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         self.fields["username"].widget.attrs.update({
             "class": "form-control",
-            "placeholder": "Choose a unique username"
+            "placeholder": "Elige un nombre de usuario"
         })
         for field_name in ["password1", "password2"]:
             if field_name in self.fields:
                 self.fields[field_name].widget.attrs.update({
                     "class": "form-control",
-                    "placeholder": "Secure password"
+                    "placeholder": "Contraseña segura"
                 })
 
     def clean_email(self):
         email = self.cleaned_data.get("email").strip().lower()
         if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("A user with this email address is already registered.")
+            raise forms.ValidationError("Ya existe un usuario registrado con este correo electrónico.")
         return email
 
 
@@ -59,9 +59,9 @@ class UserLoginForm(AuthenticationForm):
         super().__init__(*args, **kwargs)
         self.fields["username"].widget.attrs.update({
             "class": "form-control",
-            "placeholder": "Enter your username"
+            "placeholder": "Ingresa tu usuario"
         })
         self.fields["password"].widget.attrs.update({
             "class": "form-control",
-            "placeholder": "Enter your password"
+            "placeholder": "Ingresa tu contraseña"
         })

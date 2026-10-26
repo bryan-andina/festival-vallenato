@@ -17,7 +17,7 @@ class UserRegistrationView(CreateView):
         login(self.request, user)
         messages.success(
             self.request,
-            f"Welcome to the Vallenato Legend Festival platform, {user.first_name or user.username}! Your registration was successful."
+            f"¡Bienvenido a la plataforma del Festival Vallenato, {user.first_name or user.username}! Tu registro fue exitoso."
         )
         return redirect(self.success_url)
 
@@ -35,7 +35,7 @@ class UserLoginView(LoginView):
     def get_success_url(self):
         messages.info(
             self.request,
-            f"Hello, {self.request.user.first_name or self.request.user.username}! You are now logged in."
+            f"¡Hola, {self.request.user.first_name or self.request.user.username}! Has iniciado sesión correctamente."
         )
         return reverse_lazy("voting:edition_list")
 
@@ -45,5 +45,5 @@ class UserLogoutView(LogoutView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            messages.info(request, "You have been successfully logged out. See you soon!")
+            messages.info(request, "Has cerrado sesión exitosamente. ¡Hasta pronto!")
         return super().dispatch(request, *args, **kwargs)
