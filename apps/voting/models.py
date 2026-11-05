@@ -233,6 +233,18 @@ class Vote(TimeStampedModel):
         related_name="votes",
         verbose_name="Voter User"
     )
+    edition = models.ForeignKey(
+        Edition,
+        on_delete=models.PROTECT,
+        related_name="votes",
+        verbose_name="Festival Edition"
+    )
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.PROTECT,
+        related_name="votes",
+        verbose_name="Contest Category"
+    )
     voting = models.ForeignKey(
         Voting,
         on_delete=models.PROTECT,
@@ -255,15 +267,35 @@ class Vote(TimeStampedModel):
         db_table = "festival_vote"
         verbose_name = "Cast Vote"
         verbose_name_plural = "Cast Votes"
-        unique_together = ("user", "voting")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "edition", "category"],
+                name="unique_vote_per_user_category_edition"
+            )
+        ]
         ordering = ["-created_at"]
 
     def __str__(self) -> str:
-        return f"Vote by {self.user.username} on {self.voting.title}"
+        return f"Vote by {self.user.username} on {self.category.name} ({self.edition.year})"
 
     def clean(self):
         super().clean()
-        if self.selected_option.voting_id != self.voting_id:
+        if self.selected_option_id and self.voting_id and self.selected_option.voting_id != self.voting_id:
             raise ValidationError({
                 "selected_option": "The selected candidate does not belong to this voting ballot."
             })
+        if self.voting_id and self.category_id and self.voting.category_id != self.category_id:
+            raise ValidationError({
+                "category": "The voting ballot does not belong to the selected category."
+            })
+        if self.category_id and self.edition_id and self.category.edition_id != self.edition_id:
+            raise ValidationError({
+                "edition": "The category does not belong to the selected festival edition."
+            })
+
+    def save(self, *args, **kwargs):
+        if self.voting_id and not self.category_id:
+            self.category = self.voting.category
+        if self.category_id and not self.edition_id:
+            self.edition = self.category.edition
+        super().save(*args, **kwargs)

@@ -397,6 +397,8 @@ class Command(BaseCommand):
             for i, user in enumerate(voters):
                 _, created = Vote.objects.get_or_create(
                     user=user,
+                    edition=voting.category.edition,
+                    category=voting.category,
                     voting=voting,
                     defaults={
                         "selected_option": options[(i + j) % len(options)],

@@ -293,17 +293,19 @@ class OptionAdmin(admin.ModelAdmin):
 
 @admin.register(Vote)
 class VoteAdmin(admin.ModelAdmin):
-    list_display = ("user", "voting", "selected_option", "ip_address", "created_at")
-    list_filter = ("voting__category__edition", "voting", "created_at")
+    list_display = ("user", "edition", "category", "voting", "selected_option", "ip_address", "created_at")
+    list_filter = ("edition", "category", "voting", "created_at")
     search_fields = (
         "user__username",
         "user__email",
+        "edition__name",
+        "category__name",
         "voting__title",
         "selected_option__candidate_name",
     )
-    list_select_related = ("user", "voting", "selected_option__voting__category")
+    list_select_related = ("user", "edition", "category", "voting", "selected_option")
     date_hierarchy = "created_at"
-    readonly_fields = ("user", "voting", "selected_option", "ip_address", "created_at", "updated_at")
+    readonly_fields = ("user", "edition", "category", "voting", "selected_option", "ip_address", "created_at", "updated_at")
 
 
     def has_add_permission(self, request):
