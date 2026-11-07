@@ -47,11 +47,12 @@ h1, h2, h3, h4, h5, .navbar-brand {
     background-color: #dc3545;
 
 }
-
+/*
 .card-custom:hover {
     transform: translateY(-6px);
     transition: all 0.3s ease;
 }
+*/
 
 .card-custom {
     transition: all 0.3s ease;
@@ -61,7 +62,7 @@ h1, h2, h3, h4, h5, .navbar-brand {
     .hero-banner {
         padding: 2rem 1rem;
     }
-
+s
     .card-custom {
         margin-bottom: 1rem;
     }

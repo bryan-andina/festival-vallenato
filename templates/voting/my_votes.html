@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Mis Categorías Votadas
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="card card-custom p-4 mb-4">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <div>
+
+                <span class="badge bg-success mb-2">
+                    Historial Personal
+                </span>
+
+                <h1 class="h3 fw-bold">
+                    Mis Categorías Votadas
+                </h1>
+
+                <p class="text-muted mb-0">
+                    Consulta todas las categorías donde ya registraste participación.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% if votes %}
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-dark">
+
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Categoría</th>
+                        <th>Opción Elegida</th>
+                        <th>Estado</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for vote in votes %}
+
+                    <tr>
+
+                        <td>
+                            {{ vote.created_at|date:"d/m/Y H:i" }}
+                        </td>
+
+                        <td>
+                            {{ vote.selected_option.voting.category.name }}
+                        </td>
+
+                        <td>
+
+                            <span class="fw-bold text-success">
+
+                                {{ vote.selected_option.candidate_name }}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge bg-secondary">
+
+                                Voto Registrado
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="card card-custom p-5 text-center">
+
+            <i class="bi bi-clock-history display-4 text-muted"></i>
+
+            <h4 class="mt-3">
+                Sin historial de participación
+            </h4>
+
+            <p class="text-muted">
+                Todavía no has registrado votos en ninguna categoría.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
