@@ -99,15 +99,26 @@
                                             </button>
                                         {% endif %}
                                     {% elif voting.is_currently_open %}
-                                        <form method="post" action="{% url 'voting:cast_vote' voting.id option.id %}">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn btn-success w-100 fw-bold" onclick="return confirm('¿Deseas votar por {{ option.candidate_name }}?')">
-                                                <i class="bi bi-check2-circle"></i> Votar por este candidato
-                                            </button>
-                                        </form>
+                         
+
+<form method="post"
+      action="{% url 'voting:cast_vote' voting.id option.id %}">
+
+    {% csrf_token %}
+
+    <button
+        type="submit"
+        class="btn btn-success w-100 fw-bold"
+        onclick="return confirm('¿Deseas votar por {{ option.candidate_name }}?')">
+        <i class="bi bi-check2-circle"></i>
+        Votar por este candidato
+
+    </button>
+
+</form>
                                     {% else %}
                                         <button type="button" class="btn btn-secondary w-100 fw-bold" disabled>
-                                            Votación no disponible
+                                         Votación no disponible
                                         </button>
                                     {% endif %}
                                 {% else %}
