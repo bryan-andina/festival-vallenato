@@ -82,7 +82,25 @@ class CastVoteView(LoginRequiredMixin, View):
             messages.error(request, "Esta votación no se encuentra abierta para participar.")
             return redirect("voting:voting_detail", voting_id=voting.id)
 
-        option = get_object_or_404(Option, pk=option_id, voting=voting, is_active=True)
+        option = get_object_or_404(
+            Option.objects.select_related("voting__category"),
+            pk=option_id
+        )
+
+        if (
+            option.voting_id != voting.id
+            or option.voting.category_id != category.id
+            or option.voting.category.edition_id != edition.id
+        ):
+            messages.error(
+                request,
+                "La opción seleccionada no pertenece a esta categoría o edición. El voto no fue registrado."
+            )
+            return redirect("voting:voting_detail", voting_id=voting.id)
+
+        if not option.is_active:
+            messages.error(request, "La opción seleccionada no se encuentra habilitada.")
+            return redirect("voting:voting_detail", voting_id=voting.id)
 
         if Vote.objects.filter(user=request.user, category=category, edition=edition).exists():
             messages.warning(
