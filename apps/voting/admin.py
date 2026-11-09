@@ -306,6 +306,24 @@ class VoteAdmin(admin.ModelAdmin):
     list_select_related = ("user", "edition", "category", "voting", "selected_option")
     date_hierarchy = "created_at"
     readonly_fields = ("user", "edition", "category", "voting", "selected_option", "ip_address", "created_at", "updated_at")
+    change_list_template = "admin/voting/vote/change_list.html"
+
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(request, extra_context)
+        changelist = getattr(response, "context_data", {}).get("cl")
+        if changelist is not None:
+            filtered = changelist.queryset.order_by()
+            response.context_data["vote_total"] = filtered.count()
+            response.context_data["vote_summary"] = list(
+                filtered.values(
+                    "edition__year",
+                    "category__name",
+                    "selected_option__candidate_name",
+                )
+                .annotate(total=Count("id"))
+                .order_by("edition__year", "category__name", "-total", "selected_option__candidate_name")
+            )
+        return response
 
 
     def has_add_permission(self, request):
