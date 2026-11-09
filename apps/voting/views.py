@@ -134,3 +134,23 @@ class CastVoteView(LoginRequiredMixin, View):
 
         messages.success(request, f"¡Tu voto por '{option.candidate_name}' ha sido registrado exitosamente!")
         return redirect("voting:voting_detail", voting_id=voting.id)
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
+
+class MyVotesView(LoginRequiredMixin, TemplateView):
+    template_name = "voting/my_votes.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["votes"] = Vote.objects.filter(
+            user=self.request.user
+        ).select_related(
+            "selected_option",
+            "category",
+            "edition"
+        ).order_by("-created_at")
+
+        return context
+    
