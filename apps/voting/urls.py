@@ -1,5 +1,6 @@
 from django.urls import path
 from apps.voting.views import EditionListView, CategoryListView, VotingDetailView, CastVoteView
+from apps.voting.api import categories_api
 
 app_name = "voting"
 
