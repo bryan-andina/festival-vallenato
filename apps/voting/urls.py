@@ -9,4 +9,5 @@ urlpatterns = [
     path("editions/<int:year>/categories/", CategoryListView.as_view(), name="category_list"),
     path("ballot/<int:voting_id>/", VotingDetailView.as_view(), name="voting_detail"),
     path("ballot/<int:voting_id>/vote/<int:option_id>/", CastVoteView.as_view(), name="cast_vote"),
+    path("api/categorias/", categories_api, name="api_categories"),
 ]
